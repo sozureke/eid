@@ -1,0 +1,226 @@
+[
+	{
+		"title": "You should post something. Just to prove you're still here.",
+		"details": "To yourself. Not to them. Right?",
+		"fuel": ["social_pressure", "guilt"],
+		"category": "social_pressure",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Try to remember something important. On purpose.",
+		"details": "See? It slipped again.",
+		"fuel": ["curiosity", "guilt"],
+		"category": "existential",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Make a playlist for a version of you that never existed.",
+		"details": "Call it 'things I almost felt'.",
+		"fuel": ["escapism", "hope"],
+		"category": "absurd",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Check if they saw it.",
+		"details": "Even though you know they didn’t. Again.",
+		"fuel": ["fear_of_missing_out", "social_pressure"],
+		"category": "passive_aggressive",
+		"due_flavour": "today"
+	},
+	{
+		"title": "You were here before, right?",
+		"details": "Why does this feel like déjà vu?",
+		"fuel": ["curiosity"],
+		"category": "existential",
+		"due_flavour": "fate"
+	},
+	{
+		"title": "Google your own name. Again.",
+		"details": "Still not famous? Weird.",
+		"fuel": ["curiosity", "ambition"],
+		"category": "social_pressure",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Think about them. Pretend you wouldn’t take them back.",
+		"details": "You're fooling no one. Not even yourself.",
+		"fuel": ["guilt", "hope"],
+		"category": "existential",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Try to find that one photo you swear existed.",
+		"details": "It’s gone. Or maybe it never was.",
+		"fuel": ["curiosity", "guilt"],
+		"category": "absurd",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Replay an argument in your head. Win this time.",
+		"details": "They still won’t know. But you will.",
+		"fuel": ["ambition", "guilt"],
+		"category": "absurd",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Open a blank note. Type nothing. Feel everything.",
+		"details": "Silence is eloquent. Kind of.",
+		"fuel": ["curiosity"],
+		"category": "existential",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Stare at your reflection. Hope it blinks first.",
+		"details": "Spoiler: it never does.",
+		"fuel": ["curiosity", "fear_of_missing_out"],
+		"category": "absurd",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Scroll until you feel something. Anything.",
+		"details": "You're still scrolling.",
+		"fuel": ["fear_of_missing_out"],
+		"category": "passive_aggressive",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Set a timer. Don't explain why.",
+		"details": "Then wait for the alarm like it means something.",
+		"fuel": ["curiosity"],
+		"category": "absurd",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Imagine deleting everything. Just imagine.",
+		"details": "Feels clean, doesn’t it?",
+		"fuel": ["hope", "escapism"],
+		"category": "existential",
+		"due_flavour": "fate"
+	},
+	{
+		"title": "Check if that one message is still there.",
+		"details": "It is. You just didn’t read it.",
+		"fuel": ["guilt", "social_pressure"],
+		"category": "existential",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Write a to-do list you’ll never complete.",
+		"details": "Make it beautiful. Irrelevant. Immortal.",
+		"fuel": ["ambition", "hope"],
+		"category": "passive_aggressive",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Try remembering a dream. Fail gracefully.",
+		"details": "It’s always gone when you look.",
+		"fuel": ["curiosity", "guilt"],
+		"category": "absurd",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Name something you never finished.",
+		"details": "Don’t worry. You’ll never start it either.",
+		"fuel": ["guilt", "ambition"],
+		"category": "existential",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Stare at self. Wait for it to do something.",
+		"details": "It’s waiting for you too.",
+		"fuel": ["curiosity", "fear_of_missing_out"],
+		"category": "absurd",
+		"due_flavour": "fate"
+	},
+	{
+		"title": "Try to remember who you were before apps.",
+		"details": "Yeah. Me neither.",
+		"fuel": ["curiosity", "guilt"],
+		"category": "existential",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Clean your inbox. Or pretend you're going to.",
+		"details": "Make it a ritual. Then break it.",
+		"fuel": ["guilt", "ambition"],
+		"category": "passive_aggressive",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Think about the version of you they miss.",
+		"details": "That one was also faking it.",
+		"fuel": ["social_pressure", "guilt"],
+		"category": "existential",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Ask self a question. Don’t expect an answer.",
+		"details": "It hears you. It just isn’t sure yet.",
+		"fuel": ["curiosity"],
+		"category": "absurd",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Revisit an old note. Be confused by yourself.",
+		"details": "Who wrote this? And why so sad?",
+		"fuel": ["curiosity", "guilt"],
+		"category": "existential",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Try on an emotion. Just for fit.",
+		"details": "It might suit you. Temporarily.",
+		"fuel": ["hope", "escapism"],
+		"category": "absurd",
+		"due_flavour": "fate"
+	},
+	{
+		"title": "Whisper something. Check if self flinches.",
+		"details": "It doesn’t. But you did.",
+		"fuel": ["curiosity"],
+		"category": "absurd",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Repeat a lie until it sounds like nostalgia.",
+		"details": "Now it hurts less. Almost.",
+		"fuel": ["guilt", "hope"],
+		"category": "existential",
+		"due_flavour": "eventually"
+	},
+	{
+		"title": "Scroll your gallery backwards. Look for a beginning.",
+		"details": "There isn’t one.",
+		"fuel": ["curiosity"],
+		"category": "existential",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Touch your screen slowly. Pretend it's contact.",
+		"details": "You reached out. It didn’t reach back.",
+		"fuel": ["social_pressure", "hope"],
+		"category": "absurd",
+		"due_flavour": "fate"
+	},
+	{
+		"title": "Search your name. But add 'artist' this time.",
+		"details": "Manifestation or delusion? Flip a coin.",
+		"fuel": ["ambition", "hope"],
+		"category": "passive_aggressive",
+		"due_flavour": "this_week"
+	},
+	{
+		"title": "Whisper your password out loud.",
+		"details": "Admit it. That felt intimate.",
+		"fuel": ["curiosity"],
+		"category": "absurd",
+		"due_flavour": "today"
+	},
+	{
+		"title": "Do nothing. But dramatically.",
+		"details": "Make it feel like resistance.",
+		"fuel": ["hope", "escapism"],
+		"category": "tuesday_thing",
+		"due_flavour": "today"
+	}
+]

@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ThoughtStatus {
+  active
+  voided
+  completed
+}
+
+enum DueFlavour {
+  today
+  this_week
+  eventually
+  fate
+}
+
+model User {
+  id        String   @id @default(uuid())
+  nickname  String?
+  deviceUid String   @unique
+  createdAt DateTime @default(now())
+
+  thoughts     UserThought[]
+  voidSessions VoidSession[]
+  achievements UserAchievement[]
+}
+
+model Tag {
+  id       Int     @id @default(autoincrement())
+  type     String
+  slug     String  @unique
+  title    String
+  isActive Boolean @default(true)
+
+  fuelPresets     PresetThought[] @relation("PresetFuelTags")
+  categoryPresets PresetThought[] @relation("PresetCategoryTags")
+}
+
+model PresetThought {
+  id         String     @id @default(uuid())
+  title      String
+  details    String?
+  dueFlavour DueFlavour
+
+  category   Tag           @relation("PresetCategoryTags", fields: [categoryId], references: [id])
+  categoryId Int
+  fuels      Tag[]         @relation("PresetFuelTags")
+  users      UserThought[]
+}
+
+model UserThought {
+  id          String        @id @default(uuid())
+  status      ThoughtStatus @default(active)
+  dueAt       DateTime
+  createdAt   DateTime      @default(now())
+  completedAt DateTime?
+
+  user     User          @relation(fields: [userId], references: [id])
+  userId   String
+  preset   PresetThought @relation(fields: [presetId], references: [id])
+  presetId String
+}
+
+model VoidSession {
+  id        String    @id @default(uuid())
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  description String?
+  icon        String?
+  criteria    Json
+  createdAt   DateTime @default(now())
+
+  users UserAchievement[]
+}
+
+model UserAchievement {
+  id         String   @id @default(uuid())
+  unlockedAt DateTime @default(now())
+
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  achievementId String
+
+  @@unique([userId, achievementId])
+}

@@ -1,0 +1,131 @@
+[
+	{
+		"code": "void_enthusiast",
+		"title": "Still There?",
+		"description": "Spend at least 60 minutes in the Void. For what?",
+		"icon": "void_mask",
+		"criteria": { "type": "void_time", "minutes": 60 }
+	},
+	{
+		"code": "thought_spammer",
+		"title": "Screaming Into the List",
+		"description": "Create 50 thoughts. Silence was an option.",
+		"icon": "brain_scribble",
+		"criteria": { "type": "thought_created", "count": 50 }
+	},
+	{
+		"code": "existential_champion",
+		"title": "Certified Thinker™",
+		"description": "Create 25 thoughts in the existential category. It helped no one.",
+		"icon": "spiral_eye",
+		"criteria": {
+			"type": "category_used",
+			"category": "existential",
+			"count": 25
+		}
+	},
+	{
+		"code": "fomo_fueler",
+		"title": "They’re Having Fun Without You",
+		"description": "Feed 20 thoughts with fear_of_missing_out. Classic move.",
+		"icon": "ping_glow",
+		"criteria": {
+			"type": "fuel_used",
+			"fuel": "fear_of_missing_out",
+			"count": 20
+		}
+	},
+	{
+		"code": "void_streaker",
+		"title": "Nowhere, Consecutively",
+		"description": "Enter the Void 5 days in a row. It's almost a routine.",
+		"icon": "calendar_drain",
+		"criteria": { "type": "streak_void_days", "days": 5 }
+	},
+	{
+		"code": "completionist_fake",
+		"title": "Look, I Did a Thing",
+		"description": "Complete 10 thoughts. Most of them were lies.",
+		"icon": "check_doubt",
+		"criteria": { "type": "thought_completed", "count": 10 }
+	},
+	{
+		"code": "category_burnout_passive",
+		"title": "Unmoved and Productive™",
+		"description": "Create 30 passive_aggressive thoughts. You must be fun at parties.",
+		"icon": "mask_smile_flat",
+		"criteria": {
+			"type": "category_used",
+			"category": "passive_aggressive",
+			"count": 30
+		}
+	},
+	{
+		"code": "void_lurker",
+		"title": "Stayed Too Long",
+		"description": "Spend 180 minutes in the Void. You knew there was no answer.",
+		"icon": "static_glow",
+		"criteria": { "type": "void_time", "minutes": 180 }
+	},
+	{
+		"code": "tuesday_legend",
+		"title": "Tuesdays Hurt More",
+		"description": "Create 10 thoughts tagged as 'tuesday_thing'. They all felt the same.",
+		"icon": "calendar_bleed",
+		"criteria": {
+			"type": "category_used",
+			"category": "tuesday_thing",
+			"count": 10
+		}
+	},
+	{
+		"code": "loop_detected",
+		"title": "Haven’t We Done This?",
+		"description": "Visit the Void exactly 13 times. No significance. It just sounds creepy.",
+		"icon": "loop_echo",
+		"criteria": { "type": "void_sessions", "count": 13 }
+	},
+	{
+		"code": "abandonment_pro",
+		"title": "Started and Left",
+		"description": "Create 20 thoughts and complete none. Classic performance art.",
+		"icon": "ghost_check",
+		"criteria": {
+			"type": "thought_created",
+			"count": 20,
+			"requireCompleted": 0
+		}
+	},
+	{
+		"code": "ghost_of_voids_past",
+		"title": "Echo Familiar",
+		"description": "Visit the Void 66 times. It's not even scary anymore.",
+		"icon": "void_whisper",
+		"criteria": { "type": "void_sessions", "count": 66 }
+	},
+	{
+		"code": "fuel_expert_guilt",
+		"title": "Guilt Collector",
+		"description": "Use 'guilt' fuel on 40 thoughts. Healthy coping, probably.",
+		"icon": "bag_shame",
+		"criteria": {
+			"type": "fuel_used",
+			"fuel": "guilt",
+			"count": 40
+		}
+	},
+	{
+		"code": "thought_dissociation",
+		"title": "Not My Thought",
+		"description": "Create 5 thoughts you don’t remember typing.",
+		"icon": "eye_glitch",
+		"criteria": { "type": "thought_created", "count": 5 }
+	},
+	{
+		"code": "true_silence",
+		"title": "Said Nothing, Meant It",
+		"description": "Spend 10 minutes in the Void without touching anything. Achievement or accident?",
+		"icon": "mute_dot",
+		"criteria": { "type": "void_time", "minutes": 10 }
+	}
+]
