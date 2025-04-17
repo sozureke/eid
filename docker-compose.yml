@@ -1,14 +1,14 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     env_file: .env
-    ports: ["5432:5432"]
-    volumes: ["pgdata:/var/lib/postgresql/data"]
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      test: ["CMD", "pg_isready", "-U", "$$POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -17,29 +17,34 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
-    ports: ["6379:6379"]
-    volumes: ["redisdata:/data"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 3s
       retries: 5
 
-  api:                      
-    build: .                 
+  api:
+    build: .
+    restart: unless-stopped
     env_file: .env
     environment:
-      DATABASE_URL: ${DOCKER_DATABASE_URL}  schema=public"
+      DATABASE_URL: ${DOCKER_DATABASE_URL}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
     command: >
-      sh -c "npm run migrate &&
-             node dist/main.js"
+      sh -c "yarn migrate && node dist/src/main.js"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports: ["3000:3000"]
-    restart: unless-stopped
+    ports:
+      - "4200:4200"
 
 volumes:
   pgdata:
