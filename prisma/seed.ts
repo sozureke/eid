@@ -13,57 +13,63 @@ async function loadJSON<T>(relativePath: string): Promise<T> {
 
 async function main() {
   const presets = await loadJSON<SeedPreset[]>('prisma/presets.json')
-  const achievements = await loadJSON<SeedAchievement[]>('prisma/achievements.json')
+  const achievements = await loadJSON<SeedAchievement[]>(
+    'prisma/achievements.json'
+  )
   await prisma.userAchievement.deleteMany()
   await prisma.achievement.deleteMany()
   await prisma.userThought.deleteMany()
   await prisma.presetThought.deleteMany()
 
   for (const p of presets) {
-    const categoryId = await prisma.tag.upsert({
-      where: { slug: p.category },
-      update: { type: 'category', title: p.category },
-      create: { type: 'category', slug: p.category, title: p.category },
-    }).then(t => t.id)
+    const categoryId = await prisma.tag
+      .upsert({
+        where: { slug: p.category },
+        update: { type: 'category', title: p.category },
+        create: { type: 'category', slug: p.category, title: p.category }
+      })
+      .then(t => t.id)
 
     const fuelIds = await Promise.all(
       p.fuel.map(f =>
-        prisma.tag.upsert({
-          where: { slug: f },
-          update: { type: 'fuel', title: f },
-          create: { type: 'fuel', slug: f, title: f },
-        }).then(t => t.id),
-      ),
+        prisma.tag
+          .upsert({
+            where: { slug: f },
+            update: { type: 'fuel', title: f },
+            create: { type: 'fuel', slug: f, title: f }
+          })
+          .then(t => t.id)
+      )
     )
 
     await prisma.presetThought.create({
       data: {
-        title:      p.title,
-        details:    p.details,
+        title: p.title,
+        details: p.details,
         dueFlavour: p.due_flavour,
-        category:   { connect: { id: categoryId } },
-        fuels:      { connect: fuelIds.map(id => ({ id })) },
-      },
+        category: { connect: { id: categoryId } },
+        fuels: { connect: fuelIds.map(id => ({ id })) }
+      }
     })
   }
 
   // 4) сидим ачивки
   for (const a of achievements) {
     await prisma.achievement.upsert({
-      where:  { code: a.code },
+      where: { code: a.code },
       update: {
-        title:       a.title,
+        title: a.title,
         description: a.description,
-        icon:        a.icon,
-        criteria:    a.criteria,
+        icon: a.icon,
+        criteria: a.criteria
       },
       create: {
-        code:        a.code,
-        title:       a.title,
+        code: a.code,
+        title: a.title,
         description: a.description,
-        icon:        a.icon,
-        criteria:    a.criteria,
-      },
+        icon: a.icon,
+        criteria: a.criteria
+      }
     })
   }
 

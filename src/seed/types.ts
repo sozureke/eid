@@ -1,6 +1,19 @@
 export type DueFlavourString = 'today' | 'this_week' | 'eventually' | 'fate'
-export type FuelTag = 'guilt' | 'hope' | 'ambition' | 'social_pressure' | 'curiosity' | 'fear_of_missing_out' | 'escapism'
-export type CategoryTag = 'social_pressure' | 'existential' | 'passive_aggressive' | 'escapism' | 'absurd' | 'tuesday_thing'
+export type FuelTag =
+  | 'guilt'
+  | 'hope'
+  | 'ambition'
+  | 'social_pressure'
+  | 'curiosity'
+  | 'fear_of_missing_out'
+  | 'escapism'
+export type CategoryTag =
+  | 'social_pressure'
+  | 'existential'
+  | 'passive_aggressive'
+  | 'escapism'
+  | 'absurd'
+  | 'tuesday_thing'
 
 export interface SeedPreset {
   title: string
