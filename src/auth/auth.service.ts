@@ -28,7 +28,7 @@ export class AuthService {
 
 	async requestLinkToken(userId: string): Promise<{ linkToken: string}> {
 		const linkToken = crypto.randomBytes(32).toString('hex')
-		await this.redis.set(`linkToken:${linkToken}`, String(userId), 'EX', 60 * 60 * 24)
+		await this.redis.set(`linkToken:${linkToken}`, String(userId), 'EX', 600)
 		return { linkToken }
 	}
 
@@ -36,7 +36,7 @@ export class AuthService {
     linkToken: string,
     newDeviceUid: string,
   ): Promise<{ token: string }> {
-    const key = `link:token:${linkToken}`
+    const key = `linkToken:${linkToken}`
     const userIdStr = await this.redis.get(key)
     if (!userIdStr) {
       throw new UnauthorizedException('Invalid or expired link token')

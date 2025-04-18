@@ -33,7 +33,7 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: ${DOCKER_DATABASE_URL}
-      REDIS_HOST: redis
+      REDIS_HOST: ${REDIS_DOCKER_HOST}
       REDIS_PORT: ${REDIS_PORT}
       JWT_SECRET: ${JWT_SECRET}
     command: >
