@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient } from '@prisma/client'
 import { promises as fs } from 'fs'
 import path from 'path'
