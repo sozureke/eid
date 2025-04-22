@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { DueFlavour, PresetThought, Thought, ThoughtStatus, UserThought } from '@prisma/client'
+import Redis from 'ioredis'
 import { ClassifierService } from 'src/nlp/classifier.service'
-import { ClassificationInput } from 'src/nlp/nlp.types'
 import { TransformService } from 'src/nlp/transform.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreatePresetThoughtDto } from './dto/create-preset-thought.dto'
@@ -14,7 +14,8 @@ import { PresetWithTags, UserThoughtWithPreset } from './thoughts.types'
 export class ThoughtsService {
   constructor(private readonly prisma: PrismaService,
     private readonly classifier: ClassifierService,
-    private readonly transformer: TransformService
+    private readonly transformer: TransformService,
+    @Inject('REDIS_CLIENT') private readonly redis: Redis
   ) {}
 
   async getPresetThoughts(dueFlavour?: DueFlavour): Promise<PresetWithTags[]> {
@@ -75,37 +76,52 @@ export class ThoughtsService {
     })
   }
 
-  async createThought(userId: string, dto: CreateThoughtDto) {
-    const original = await this.prisma.thought.create({
+  async createThought(
+    userId: string,
+    dto: CreateThoughtDto
+  ): Promise<Thought> {
+    const original = {
+      title: dto.title,
+      details: dto.details,
+    }
+  
+    const classification = await this.classifier.classify(original)
+  
+    let title = dto.title
+    let details = dto.details
+  
+    const isToxic = this.classifier.isToxic(classification.label) &&
+                    this.classifier.meetsThreshold(classification.score)
+  
+    if (isToxic) {
+      const rewritten = await this.transformer.rewrite(title, details, classification.label)
+      title = rewritten.title
+      details = rewritten.details ?? null
+    }
+  
+    const thought = await this.prisma.thought.create({
       data: {
         userId,
-        title: dto.title,
-        details: dto.details,
+        title,
+        details,
         status: dto.status,
         dueAt: dto.dueAt ? new Date(dto.dueAt) : null,
       },
     })
-
-    const input: ClassificationInput = {
-      title: dto.title,
-      details: dto.details,
-    }
-
-    const { label, score } = await this.classifier.classify(input)
-
-    if (this.classifier.isToxic(label) && this.classifier.meetsThreshold(score)) {
-      const transformed = await this.transformer.rewrite(dto.title, dto.details, label)
-      await this.prisma.thought.update({
-        where: { id: original.id },
-        data: {
-          title: transformed.title,
-          details: transformed.details ?? original.details,
-        },
+  
+    await this.redis.lpush(
+      `thought:logs:${userId}`,
+      JSON.stringify({
+        createdAt: new Date().toISOString(),
+        isToxic,
+        label: classification.label,
+        score: classification.score,
+        original,
+        transformed: { title, details },
       })
-      return { original, transformed }
-    }
-
-    return { original }
+    )
+  
+    return thought
   }
 
 

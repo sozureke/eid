@@ -1,16 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
-import Handlebars from 'handlebars'
-import { Redis } from 'ioredis'
+import ollamaConfig from 'src/config/ollama.config'
 import { prompts } from './nlp-prompts.config'
 import { ClassificationInput, ClassificationResult } from './nlp.types'
 
 @Injectable()
 export class ClassifierService {
   constructor(
-    @Inject('REDIS_CLIENT') private readonly redis: Redis,
-    private readonly config: ConfigService,
+    @Inject(ollamaConfig.KEY) private readonly config: ConfigType<typeof ollamaConfig>,
   ) {}
 
   async classify(input: ClassificationInput): Promise<ClassificationResult> {
@@ -20,9 +18,9 @@ export class ClassifierService {
       details: input.details,
     })
 
-    const url = this.config.get<string>('ollama.host')
-    const model = this.config.get<string>('ollama.model')
-    const maxTokens = this.config.get<number>('ollama.maxTokens')
+    const url = this.config.host
+    const model = this.config.model
+    const maxTokens = this.config.maxTokens
 
     const { data } = await axios.post(`${url}/api/generate`, {
       model,

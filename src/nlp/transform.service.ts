@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
 import Handlebars from 'handlebars'
+import ollamaConfig from 'src/config/ollama.config'
 import { prompts } from './nlp-prompts.config'
 
 @Injectable()
 export class TransformService {
-	constructor(private readonly config: ConfigService){}
+  constructor(
+    @Inject(ollamaConfig.KEY)
+    private readonly config: ConfigType<typeof ollamaConfig>
+  ) {}
 
-	async rewrite(
+  async rewrite(
     title: string,
     details: string | null,
     label: string
@@ -16,18 +20,13 @@ export class TransformService {
     const template = Handlebars.compile(prompts.transform)
     const prompt = template({ title, details, label })
 
-    const url = this.config.get<string>('ollama.host')
-    const model = this.config.get<string>('ollama.model')
-    const maxTokens = this.config.get<number>('ollama.maxTokens')
-    const temperature = this.config.get<number>('ollama.temperature')
-
-    const { data } = await axios.post(`${url}/api/generate`, {
-      model,
+    const { data } = await axios.post(`${this.config.host}/api/generate`, {
+      model: this.config.model,
       prompt,
       stream: false,
       options: {
-        temperature,
-        num_predict: maxTokens,
+        temperature: this.config.temperature,
+        num_predict: this.config.maxTokens,
       },
     })
 
