@@ -23,12 +23,14 @@ enum DueFlavour {
 model User {
   id        String   @id @default(uuid())
   nickname  String?
+  role      String   @default("user")
   deviceUid String   @unique
   createdAt DateTime @default(now())
 
   thoughts     UserThought[]
   voidSessions VoidSession[]
   achievements UserAchievement[]
+  userThoughts Thought[]
 }
 
 model Tag {
@@ -52,6 +54,20 @@ model PresetThought {
   categoryId Int
   fuels      Tag[]         @relation("PresetFuelTags")
   users      UserThought[]
+}
+
+model Thought {
+  id          String        @id @default(uuid())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  title       String
+  details     String?
+  status      ThoughtStatus @default(active)
+  dueAt       DateTime?
+  createdAt   DateTime      @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
 }
 
 model UserThought {

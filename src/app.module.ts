@@ -3,9 +3,14 @@ import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { AuthModule } from './auth/auth.module'
 
+import { APP_GUARD } from '@nestjs/core'
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard'
+import { RolesGuard } from './auth/guard/roles.guard'
+import { OwnershipGuard } from './common/guards/ownership.guard'
 import redisConfig from './config/redis.config'
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
+import { ThoughtsModule } from './thoughts/thoughts.module'
 
 @Module({
   imports: [
@@ -19,9 +24,12 @@ import { RedisModule } from './redis/redis.module'
     }]}),
     AuthModule,
     PrismaModule,
-    RedisModule
+    RedisModule,
+    ThoughtsModule
   ],
   controllers: [],
-  providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule }],
+  providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_GUARD, useClass: OwnershipGuard },],
 })
 export class AppModule {}
