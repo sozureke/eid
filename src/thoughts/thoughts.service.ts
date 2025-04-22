@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { DueFlavour, PresetThought, Thought, ThoughtStatus, UserThought } from '@prisma/client'
+import { ClassifierService } from 'src/nlp/classifier.service'
+import { ClassificationInput } from 'src/nlp/nlp.types'
+import { TransformService } from 'src/nlp/transform.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreatePresetThoughtDto } from './dto/create-preset-thought.dto'
 import { CreateThoughtDto } from './dto/create-thought.dto'
@@ -9,7 +12,10 @@ import { PresetWithTags, UserThoughtWithPreset } from './thoughts.types'
 
 @Injectable()
 export class ThoughtsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+    private readonly classifier: ClassifierService,
+    private readonly transformer: TransformService
+  ) {}
 
   async getPresetThoughts(dueFlavour?: DueFlavour): Promise<PresetWithTags[]> {
     return this.prisma.presetThought.findMany({
@@ -69,11 +75,8 @@ export class ThoughtsService {
     })
   }
 
-  async createThought(
-    userId: string,
-    dto: CreateThoughtDto
-  ): Promise<Thought> {
-    return this.prisma.thought.create({
+  async createThought(userId: string, dto: CreateThoughtDto) {
+    const original = await this.prisma.thought.create({
       data: {
         userId,
         title: dto.title,
@@ -82,6 +85,27 @@ export class ThoughtsService {
         dueAt: dto.dueAt ? new Date(dto.dueAt) : null,
       },
     })
+
+    const input: ClassificationInput = {
+      title: dto.title,
+      details: dto.details,
+    }
+
+    const { label, score } = await this.classifier.classify(input)
+
+    if (this.classifier.isToxic(label) && this.classifier.meetsThreshold(score)) {
+      const transformed = await this.transformer.rewrite(dto.title, dto.details, label)
+      await this.prisma.thought.update({
+        where: { id: original.id },
+        data: {
+          title: transformed.title,
+          details: transformed.details ?? original.details,
+        },
+      })
+      return { original, transformed }
+    }
+
+    return { original }
   }
 
 

@@ -7,7 +7,10 @@ import { APP_GUARD } from '@nestjs/core'
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard'
 import { RolesGuard } from './auth/guard/roles.guard'
 import { OwnershipGuard } from './common/guards/ownership.guard'
+import nlpConfig from './config/nlp.config'
+import ollamaConfig from './config/ollama.config'
 import redisConfig from './config/redis.config'
+import { NlpModule } from './nlp/nlp.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
 import { ThoughtsModule } from './thoughts/thoughts.module'
@@ -16,7 +19,7 @@ import { ThoughtsModule } from './thoughts/thoughts.module'
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [redisConfig]
+      load: [redisConfig, nlpConfig, ollamaConfig],
     }),
     ThrottlerModule.forRoot({throttlers: [{
       ttl: 6000,
@@ -25,7 +28,8 @@ import { ThoughtsModule } from './thoughts/thoughts.module'
     AuthModule,
     PrismaModule,
     RedisModule,
-    ThoughtsModule
+    ThoughtsModule,
+    NlpModule
   ],
   controllers: [],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },
