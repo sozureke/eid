@@ -12,6 +12,8 @@ import appConfig from './config/app.config'
 import { swaggerConfig } from './config/swagger.config'
 import { PrometheusInterceptor } from './metrics/interceptors/prometheus.interceptor'
 
+const cookieParser = require('cookie-parser')
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
@@ -33,6 +35,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api')
   app.use(helmet())
+  app.use(cookieParser())
 
   if (!isProd) {
     app.use(morgan('dev'))
