@@ -1,33 +1,48 @@
 import { ValidationPipe } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
-import { AppModule } from './app.module'
+import morgan from 'morgan'
 
+import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './common/filters/all-exception.filter'
+import { LoggerService } from './common/logger/logger.service'
+import { LoggingInterceptor } from './common/logger/logging.interceptor'
 import appConfig from './config/app.config'
 import { swaggerConfig } from './config/swagger.config'
 
-const morgan = require('morgan')
-
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
-  const config = app.get<ConfigType<typeof appConfig>>(appConfig.KEY, { strict: false })
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  })
+
+  const logger = new LoggerService()
+  app.useLogger(logger)
+
+  const config = app.get(appConfig.KEY)
+  const isProd = process.env.NODE_ENV === 'production'
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       
-      forbidNonWhitelisted: true, 
-      transform: true
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   )
-  
+
   app.setGlobalPrefix('api')
-  app.use(morgan('combined'))
   app.use(helmet())
+
+  if (!isProd) {
+    app.use(morgan('dev'))
+  }
+
+  app.useGlobalInterceptors(new LoggingInterceptor(logger))
   app.useGlobalFilters(new AllExceptionsFilter())
 
-  swaggerConfig(app)
+  if (!isProd) {
+    swaggerConfig(app)
+  }
+
   await app.listen(config.port)
 }
 bootstrap()
