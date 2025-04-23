@@ -1,9 +1,9 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import * as client from 'prom-client'
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
-import { RolesGuard } from 'src/auth/guard/roles.guard'
-import { Roles } from 'src/auth/roles.decorator'
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard'
+import { RolesGuard } from '../auth/guard/roles.guard'
+import { Roles } from '../auth/roles.decorator'
 
 @Controller('metrics')
 export class MetricsController {

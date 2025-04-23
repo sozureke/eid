@@ -5,14 +5,25 @@ import redisConfig from 'src/config/redis.config'
 
 @Global()
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule.forFeature(redisConfig)],
   providers: [
     {
       provide: 'REDIS_CLIENT',
-      useFactory: (config: ConfigType<typeof redisConfig>) => {
-        const host = config.host
-        const port = config.port
-        return new Redis({ host, port })
+      useFactory: (
+        configService: ConfigService,
+      ) => {
+        const host = configService.get<ConfigType<typeof redisConfig>['host']>('redis.host')
+        const port = configService.get<ConfigType<typeof redisConfig>['port']>('redis.port')
+        const client = new Redis({ host, port })
+
+        const shutdown = async () => {
+          await client.quit()
+        }
+
+        process.on('SIGINT', shutdown)
+        process.on('SIGTERM', shutdown)
+
+        return client
       },
       inject: [ConfigService],
     },
