@@ -1,10 +1,9 @@
-// src/common/guards/ownership.guard.ts
 import {
-	CanActivate,
-	ExecutionContext,
-	ForbiddenException,
-	Injectable,
-	NotFoundException,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { PrismaService } from '../../prisma/prisma.service'

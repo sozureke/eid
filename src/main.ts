@@ -3,7 +3,8 @@ import { ConfigType } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
 import { AppModule } from './app.module'
-import { HttpExceptionFilter } from './common/filters/http-exception.filter'
+
+import { AllExceptionsFilter } from './common/filters/all-exception.filter'
 import appConfig from './config/app.config'
 import { swaggerConfig } from './config/swagger.config'
 
@@ -24,7 +25,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.use(morgan('combined'))
   app.use(helmet())
-  app.useGlobalFilters(new HttpExceptionFilter())
+  app.useGlobalFilters(new AllExceptionsFilter())
 
   swaggerConfig(app)
   await app.listen(config.port)
