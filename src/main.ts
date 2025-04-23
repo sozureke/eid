@@ -9,6 +9,7 @@ import { LoggerService } from './common/logger/logger.service'
 import { LoggingInterceptor } from './common/logger/logging.interceptor'
 import appConfig from './config/app.config'
 import { swaggerConfig } from './config/swagger.config'
+import { PrometheusInterceptor } from './metrics/interceptors/prometheus.interceptor'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -37,8 +38,9 @@ async function bootstrap() {
   }
 
   app.useGlobalInterceptors(new LoggingInterceptor(logger))
+  app.useGlobalInterceptors(new PrometheusInterceptor())
   app.useGlobalFilters(new AllExceptionsFilter())
-
+  
   if (!isProd) {
     swaggerConfig(app)
   }

@@ -12,6 +12,7 @@ import jwtConfig, { jwtConfigSchema } from './config/jwt.config'
 import nlpConfig, { nlpConfigSchema } from './config/nlp.config'
 import ollamaConfig, { ollamaConfigSchema } from './config/ollama.config'
 import redisConfig, { redisConfigSchema } from './config/redis.config'
+import { MetricsController } from './metrics/metrics.controller'
 import { NlpModule } from './nlp/nlp.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
@@ -37,7 +38,7 @@ import { ThoughtsModule } from './thoughts/thoughts.module'
     ThoughtsModule,
     NlpModule
   ],
-  controllers: [],
+  controllers: [MetricsController],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: OwnershipGuard },],
