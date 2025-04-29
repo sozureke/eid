@@ -42,3 +42,4 @@ build/config\.gypi
 pnpm-lock.yaml
 /.history
 logs
+secrets
