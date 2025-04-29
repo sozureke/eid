@@ -43,21 +43,6 @@ export class AuthService {
     res.clearCookie('refreshToken')
   }
 
-  async confirmLinkToken(linkToken: string, newDeviceUid: string, res: Response): Promise<{ accessToken: string }> {
-    const key = `linkToken:${linkToken}`
-    const userIdStr = await this.redis.get(key)
-    if (!userIdStr) {
-      throw new UnauthorizedException('Invalid or expired link token')
-    }
-
-    await this.prisma.user.update({
-      where: { id: userIdStr },
-      data: { deviceUid: newDeviceUid },
-    })
-
-    await this.redis.del(key)
-    return this.generateTokens(userIdStr, res)
-  }
 
   async generateTokens(userId: string, res: Response): Promise<{ accessToken: string }> {
     const accessToken = this.jwt.sign({ sub: userId })
@@ -80,11 +65,5 @@ export class AuthService {
     })
     if (!user) throw new UnauthorizedException('User not found')
     return user
-  }
-
-  async requestLinkToken(userId: string): Promise<{ linkToken: string }> {
-    const linkToken = crypto.randomBytes(32).toString('hex')
-    await this.redis.set(`linkToken:${linkToken}`, userId, 'EX', 600)
-    return { linkToken }
   }
 }

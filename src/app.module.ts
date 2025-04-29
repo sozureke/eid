@@ -12,20 +12,22 @@ import jwtConfig, { jwtConfigSchema } from './config/jwt.config'
 import nlpConfig, { nlpConfigSchema } from './config/nlp.config'
 import ollamaConfig, { ollamaConfigSchema } from './config/ollama.config'
 import redisConfig, { redisConfigSchema } from './config/redis.config'
+import { securityConfigSchema } from './config/tfa.config'
 import { HealthController } from './health/health.controller'
+import { HealthModule } from './health/health.module'
 import { MetricsController } from './metrics/metrics.controller'
 import { NlpModule } from './nlp/nlp.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
+import { TfaModule } from './tfa/tfa.module'
 import { ThoughtsModule } from './thoughts/thoughts.module'
-import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, redisConfig, nlpConfig, jwtConfig, ollamaConfig],
-      validationSchema: appConfigSchema.concat(jwtConfigSchema).concat(nlpConfigSchema).concat(redisConfigSchema).concat(ollamaConfigSchema),
+      validationSchema: appConfigSchema.concat(jwtConfigSchema).concat(nlpConfigSchema).concat(redisConfigSchema).concat(ollamaConfigSchema).concat(securityConfigSchema),
       validationOptions: {
         abortEarly: true
       }
@@ -39,7 +41,8 @@ import { HealthModule } from './health/health.module';
     RedisModule,
     ThoughtsModule,
     NlpModule,
-    HealthModule
+    HealthModule,
+    TfaModule
   ],
   controllers: [HealthController, MetricsController],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },

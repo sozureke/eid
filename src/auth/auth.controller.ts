@@ -1,18 +1,17 @@
 import {
-	Body,
-	Controller,
-	Get,
-	Post,
-	Req,
-	Res,
-	UseGuards,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { Request, Response } from 'express'
-import { Public } from 'src/common/decorators/public.decorator'
+import { Public } from '../common/decorators/public.decorator'
 import { AuthService } from './auth.service'
 import { AuthAnonDto } from './dto/auth-anon.dto'
-import { AuthLinkConfirmDto } from './dto/auth-link-confirm.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -42,21 +41,9 @@ export class AuthController {
     return res.status(204).send()
   }
 
-  @Post('link-confirm')
-  async confirmLinkToken(@Body() dto: AuthLinkConfirmDto, @Res() res: Response) {
-    const result = await this.authService.confirmLinkToken(dto.linkToken, dto.newDeviceUid, res)
-    return res.json(result)
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getProfile(@Req() req) {
     return this.authService.getProfile(req.user.userId)
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post('link-request')
-  async linkRequest(@Req() req) {
-    return this.authService.requestLinkToken(req.user.userId)
   }
 }

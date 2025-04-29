@@ -1,7 +1,17 @@
-import { Global, Module } from '@nestjs/common'
-import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config'
-import Redis from 'ioredis'
-import redisConfig from 'src/config/redis.config'
+import { Global, Inject, Injectable, Module, OnApplicationShutdown } from '@nestjs/common'
+import { ConfigModule, ConfigType } from '@nestjs/config'
+import Redis, { Redis as RedisClient } from 'ioredis'
+import redisConfig from '../config/redis.config'
+
+@Injectable()
+class RedisShutdownService implements OnApplicationShutdown {
+  constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClient) {}
+
+  async onApplicationShutdown(signal: string) {
+    await this.redis.quit()
+    console.log(`[Redis] Connection closed on ${signal}`)
+  }
+}
 
 @Global()
 @Module({
@@ -9,24 +19,15 @@ import redisConfig from 'src/config/redis.config'
   providers: [
     {
       provide: 'REDIS_CLIENT',
-      useFactory: (
-        configService: ConfigService,
-      ) => {
-        const host = configService.get<ConfigType<typeof redisConfig>['host']>('redis.host')
-        const port = configService.get<ConfigType<typeof redisConfig>['port']>('redis.port')
-        const client = new Redis({ host, port })
-
-        const shutdown = async () => {
-          await client.quit()
-        }
-
-        process.on('SIGINT', shutdown)
-        process.on('SIGTERM', shutdown)
-
-        return client
+      useFactory: (config: ConfigType<typeof redisConfig>) => {
+        return new Redis({
+          host: config.host,
+          port: config.port,
+        })
       },
-      inject: [ConfigService],
+      inject: [redisConfig.KEY],
     },
+    RedisShutdownService,
   ],
   exports: ['REDIS_CLIENT'],
 })

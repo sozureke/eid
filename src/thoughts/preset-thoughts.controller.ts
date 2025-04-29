@@ -1,18 +1,18 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Patch,
-	Post,
-	Query,
-	UseGuards
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards
 } from '@nestjs/common'
 import { DueFlavour } from '@prisma/client'
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard'
-import { RolesGuard } from 'src/auth/guard/roles.guard'
-import { Roles } from 'src/auth/roles.decorator'
+import { JwtAuthGuard } from 'auth/guard/jwt-auth.guard'
+import { RolesGuard } from 'auth/guard/roles.guard'
+import { Roles } from 'auth/roles.decorator'
 import { ThoughtsService } from '../thoughts/thoughts.service'
 import { CreatePresetThoughtDto } from './dto/create-preset-thought.dto'
 import { UpdatePresetThoughtDto } from './dto/update-preset-thought.dto'

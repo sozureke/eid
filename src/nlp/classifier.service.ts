@@ -1,7 +1,7 @@
+import ollamaConfig from '@config/ollama.config'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
-import ollamaConfig from 'src/config/ollama.config'
 import { prompts } from './nlp-prompts.config'
 import { ClassificationInput, ClassificationResult } from './nlp.types'
 

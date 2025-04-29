@@ -1,8 +1,8 @@
+import ollamaConfig from '@config/ollama.config'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
 import Handlebars from 'handlebars'
-import ollamaConfig from 'src/config/ollama.config'
 import { prompts } from './nlp-prompts.config'
 
 @Injectable()

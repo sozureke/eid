@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    
+    "paths": {
+      "@config/*": ["config/*"],
+      "@common/*": ["common/*"]
+    },
+
     "module": "commonjs",
     "target": "ES2021",
     "declaration": true,
@@ -10,12 +17,11 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "strictNullChecks": false, 
+    "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
