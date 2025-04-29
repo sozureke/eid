@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard'
+import { TfaRateLimitGuard } from './guard/tfa-rate-limit.guard'
 import { TfaService } from './tfa.service'
 
 @Controller('tfa')
@@ -12,6 +13,7 @@ export class TfaController {
     return this.tfa.setup(req.user.userId)
   }
 
+  @UseGuards(TfaRateLimitGuard)
   @Post('verify')
   async verify(
     @Request() req,
