@@ -1,5 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { DueFlavour, PresetThought, Thought, ThoughtStatus, UserThought } from '@prisma/client'
+import { FirebaseService } from 'firebase/firebase.service'
 import Redis from 'ioredis'
 import { ClassifierService } from 'nlp/classifier.service'
 import { TransformService } from 'nlp/transform.service'
@@ -15,6 +16,7 @@ export class ThoughtsService {
   constructor(private readonly prisma: PrismaService,
     private readonly classifier: ClassifierService,
     private readonly transformer: TransformService,
+    private readonly firebase: FirebaseService, 
     @Inject('REDIS_CLIENT') private readonly redis: Redis
   ) {}
 
@@ -76,51 +78,55 @@ export class ThoughtsService {
     })
   }
 
-  async createThought(
-    userId: string,
-    dto: CreateThoughtDto
-  ): Promise<Thought> {
-    const original = {
-      title: dto.title,
-      details: dto.details,
-    }
-  
+  async createThought(userId: string, dto: CreateThoughtDto): Promise<Thought> {
+    const original = { title: dto.title, details: dto.details }
+
     const classification = await this.classifier.classify(original)
-  
-    let title = dto.title
+
+    let title   = dto.title
     let details = dto.details
-  
+    let pushed  = false
+
     const isToxic = this.classifier.isToxic(classification.label) &&
                     this.classifier.meetsThreshold(classification.score)
-  
+
     if (isToxic) {
       const rewritten = await this.transformer.rewrite(title, details, classification.label)
-      title = rewritten.title
+      title   = rewritten.title
       details = rewritten.details ?? null
+
+      const devices = await this.prisma.device.findMany({ where: { userId }, select: { pushToken: true } })
+      if (devices.length) {
+        const msg = await this.transformer.pushMessage('nlp-rewrite', { old: original, new: { title, details } })
+        for (const d of devices) {
+          await this.firebase.sendPush(d.pushToken, msg) 
+        }
+      }
     }
-  
+
     const thought = await this.prisma.thought.create({
       data: {
         userId,
         title,
         details,
         status: dto.status,
-        dueAt: dto.dueAt ? new Date(dto.dueAt) : null,
+        dueAt : dto.dueAt ? new Date(dto.dueAt) : null,
       },
     })
-  
+
     await this.redis.lpush(
       `thought:logs:${userId}`,
       JSON.stringify({
-        createdAt: new Date().toISOString(),
+        createdAt : new Date().toISOString(),
         isToxic,
-        label: classification.label,
-        score: classification.score,
+        pushed,
+        label : classification.label,
+        score : classification.score,
         original,
         transformed: { title, details },
-      })
+      }),
     )
-  
+
     return thought
   }
 

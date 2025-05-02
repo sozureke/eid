@@ -1,11 +1,15 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { FirebaseService } from 'firebase/firebase.service'
 import { Redis } from 'ioredis'
+import { TransformService } from 'nlp/transform.service'
 import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class VoidService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly transformService: TransformService,
+    private readonly firebaseService: FirebaseService,
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
   ) {}
 
@@ -30,25 +34,35 @@ export class VoidService {
     const session = await this.prisma.voidSession.findFirst({
       where: { userId, endedAt: null },
     })
+  
     if (!session) {
       throw new BadRequestException('No active void session')
     }
-
+  
     const ended = new Date()
     const updated = await this.prisma.voidSession.update({
       where: { id: session.id },
       data: { endedAt: ended },
     })
-
+  
     await this.redis.del(`void:session:${userId}`)
-
+  
     const durationMs = ended.getTime() - session.startedAt.getTime()
-
+    const durationMin = Math.floor(durationMs / 60000)
+  
+    const message = await this.transformService.pushMessage('void-end', { durationMin })
+  
+    await this.firebaseService.sendPush(userId, {
+      title: message.title,
+      body: message.body,
+    })
+  
     return {
       voidSession: updated,
       durationMs,
     }
   }
+  
 
   async autoStopSession(userId: string) {
     const session = await this.prisma.voidSession.findFirst({

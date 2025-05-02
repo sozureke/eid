@@ -32,6 +32,7 @@ model User {
   voidSessions VoidSession[]
   achievements UserAchievement[]
   userThoughts Thought[]
+  devices      Device[]
 
   totpSecretEnc Bytes?
   totpEnabled   Boolean @default(false)
@@ -118,4 +119,16 @@ model UserAchievement {
   achievementId String
 
   @@unique([userId, achievementId])
+}
+
+model Device {
+  id        String   @id @default(uuid())
+  userId    String
+  pushToken String   @unique
+  platform  String // ios / android / web
+  lastSeen  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

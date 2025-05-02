@@ -3,7 +3,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
 import Handlebars from 'handlebars'
-import { prompts } from './nlp-prompts.config'
+import { pushPrompts } from './prompts/nlp-notifications-promts.config'
+import { prompts } from './prompts/nlp-thoughts-prompts.config'
 
 @Injectable()
 export class TransformService {
@@ -12,6 +13,8 @@ export class TransformService {
     private readonly config: ConfigType<typeof ollamaConfig>
   ) {}
 
+  private url = `${this.config.host}/api/generate`
+  
   async rewrite(
     title: string,
     details: string | null,
@@ -20,7 +23,7 @@ export class TransformService {
     const template = Handlebars.compile(prompts.transform)
     const prompt = template({ title, details, label })
 
-    const { data } = await axios.post(`${this.config.host}/api/generate`, {
+    const { data } = await axios.post(this.url, {
       model: this.config.model,
       prompt,
       stream: false,
@@ -39,5 +42,26 @@ export class TransformService {
     } catch (err) {
       throw new Error('Failed to parse transform response')
     }
+  }
+
+  async pushMessage(
+    type: keyof typeof pushPrompts,
+    context: Record<string, any>
+  ): Promise<{ title: string; body: string }> {
+    const template = Handlebars.compile(pushPrompts[type])
+    const prompt = template(context)
+
+    const { data } = await axios.post(this.url, {
+      model: this.config.model,
+      prompt,
+      stream: false,
+      options: {
+        temperature: this.config.temperature,
+        num_predict: this.config.maxTokens,
+      },
+    })
+
+    const { title, body } = JSON.parse(data.response)
+    return { title, body }
   }
 }

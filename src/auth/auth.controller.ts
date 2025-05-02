@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Req,
   Res,
@@ -24,14 +25,17 @@ export class AuthController {
     return res.json(result)
   }
 
+  @Public()
   @Post('refresh')
-  async refreshTokens(@Req() req: Request, @Res() res: Response) {
-    const token = req.cookies?.refreshToken
-    const deviceUid = req.body.deviceUid
-    if (!token || !deviceUid) return res.status(401).json({ message: 'Unauthorized' })
+  @HttpCode(200)
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = (req as any).cookies?.refreshToken
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Unauthorized' })
+    }
 
-    const result = await this.authService.refreshTokens(token, deviceUid, res)
-    return res.json(result)
+    const { accessToken } = await this.authService.refreshTokens(refreshToken, res)
+    return res.json({ accessToken })
   }
 
   @Post('logout')

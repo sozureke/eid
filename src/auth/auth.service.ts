@@ -28,14 +28,14 @@ export class AuthService {
     return { accessToken: tokens.accessToken }
   }
 
-  async refreshTokens(token: string, deviceUid: string, res: Response): Promise<{ accessToken: string }> {
+  async refreshTokens(token: string, res: Response): Promise<{ accessToken: string }> {
     const userId = await this.redis.get(`refresh:${token}`)
     if (!userId) throw new UnauthorizedException('Invalid refresh token')
-
-    const user = await this.prisma.user.findFirst({ where: { id: userId, deviceUid } })
-    if (!user) throw new UnauthorizedException('Device mismatch')
-
-    return this.generateTokens(user.id, res)
+  
+    const hasDevice = await this.prisma.device.count({ where: { userId } })
+    if (!hasDevice) throw new UnauthorizedException('No active device')
+  
+    return this.generateTokens(userId, res)
   }
 
   async logout(token: string, res: Response): Promise<void> {

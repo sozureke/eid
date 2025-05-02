@@ -2,8 +2,8 @@ import ollamaConfig from '@config/ollama.config'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import axios from 'axios'
-import { prompts } from './nlp-prompts.config'
 import { ClassificationInput, ClassificationResult } from './nlp.types'
+import { prompts } from './prompts/nlp-thoughts-prompts.config'
 
 @Injectable()
 export class ClassifierService {

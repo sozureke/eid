@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { EventEmitterModule } from '@nestjs/event-emitter'
+import { FirebaseModule } from 'firebase/firebase.module'
+import { NlpModule } from 'nlp/nlp.module'
 import { PrismaModule } from 'prisma/prisma.module'
 import { VoidCronService } from './void-cron.service'
 import { VoidController } from './void.controller'
@@ -10,6 +12,8 @@ import { VoidService } from './void.service'
   imports: [
     ConfigModule,
     PrismaModule,
+    FirebaseModule,
+    NlpModule,
     EventEmitterModule.forRoot()],
   
   controllers: [VoidController],
