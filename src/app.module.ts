@@ -10,11 +10,14 @@ import { RolesGuard } from './auth/guard/roles.guard'
 import { OwnershipGuard } from './common/guards/ownership.guard'
 
 import appConfig, { appConfigSchema } from '@config/app.config'
+import firebaseConfig, { firebaseConfigSchema } from '@config/firebase.config'
 import jwtConfig, { jwtConfigSchema } from '@config/jwt.config'
 import nlpConfig, { nlpConfigSchema } from '@config/nlp.config'
 import ollamaConfig, { ollamaConfigSchema } from '@config/ollama.config'
 import redisConfig, { redisConfigSchema } from '@config/redis.config'
 import { securityConfigSchema } from '@config/tfa.config'
+import { BullModule } from '@nestjs/bull'
+import { FirebaseModule } from './firebase/firebase.module'
 import { HealthController } from './health/health.controller'
 import { HealthModule } from './health/health.module'
 import { MetricsController } from './metrics/metrics.controller'
@@ -30,8 +33,8 @@ import { VoidService } from './void/void.service'
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, redisConfig, nlpConfig, jwtConfig, ollamaConfig, voidConfig],
-      validationSchema: appConfigSchema.concat(jwtConfigSchema).concat(nlpConfigSchema).concat(redisConfigSchema).concat(ollamaConfigSchema).concat(securityConfigSchema),
+      load: [appConfig, redisConfig, nlpConfig, jwtConfig, ollamaConfig, voidConfig, firebaseConfig],
+      validationSchema: appConfigSchema.concat(jwtConfigSchema).concat(nlpConfigSchema).concat(redisConfigSchema).concat(ollamaConfigSchema).concat(securityConfigSchema).concat(firebaseConfigSchema),
       validationOptions: {
         abortEarly: true
       }
@@ -40,6 +43,13 @@ import { VoidService } from './void/void.service'
       ttl: 6000,
       limit: 10,
     }]}),
+
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT, 10),
+      }
+    }),
     AuthModule,
     PrismaModule,
     RedisModule,
@@ -47,7 +57,8 @@ import { VoidService } from './void/void.service'
     NlpModule,
     HealthModule,
     TfaModule,
-    VoidModule
+    VoidModule,
+    FirebaseModule
   ],
   controllers: [HealthController, MetricsController],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },
