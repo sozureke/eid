@@ -47,21 +47,19 @@ export class VoidService {
   
     await this.redis.del(`void:session:${userId}`)
   
-    const durationMs = ended.getTime() - session.startedAt.getTime()
+    const durationMs  = ended.getTime() - session.startedAt.getTime()
     const durationMin = Math.floor(durationMs / 60000)
   
-    const message = await this.transformService.pushMessage('void-end', { durationMin })
+    const msg = await this.transformService.pushMessage('void-end', { durationMin })
   
-    await this.firebaseService.sendPush(userId, {
-      title: message.title,
-      body: message.body,
-    })
+    await this.firebaseService.sendToUser(userId, msg)
   
     return {
       voidSession: updated,
       durationMs,
     }
   }
+  
   
 
   async autoStopSession(userId: string) {

@@ -3,6 +3,7 @@ import { BullModule } from '@nestjs/bull'
 import { Inject, Module, OnModuleInit } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { cert, initializeApp } from 'firebase-admin/app'
+import { PrismaModule } from 'prisma/prisma.module'
 import { FirebaseController } from './firebase.controller'
 import { FirebaseProcessor } from './firebase.processor'
 import { FIREBASE_QUEUE } from './firebase.queue'
@@ -10,6 +11,7 @@ import { FirebaseService } from './firebase.service'
 
 @Module({
   imports: [
+    PrismaModule,
     BullModule.registerQueue({
       name: FIREBASE_QUEUE,
     }),

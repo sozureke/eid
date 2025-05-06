@@ -5,6 +5,7 @@ import * as crypto from 'crypto'
 import { Response } from 'express'
 import { Redis } from 'ioredis'
 import { PrismaService } from '../prisma/prisma.service'
+import { DevicePingDto } from './dto/device-ping.dto'
 
 @Injectable()
 export class AuthService {
@@ -65,5 +66,13 @@ export class AuthService {
     })
     if (!user) throw new UnauthorizedException('User not found')
     return user
+  }
+
+  async registerDevice(userId: string, dto: DevicePingDto) {
+    await this.prisma.device.upsert({
+      where: { pushToken: dto.pushToken },
+      create: { userId, ...dto, lastSeen: new Date() },
+      update: { userId, platform: dto.platform, lastSeen: new Date() },
+    })
   }
 }

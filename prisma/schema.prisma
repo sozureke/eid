@@ -122,13 +122,20 @@ model UserAchievement {
 }
 
 model Device {
-  id        String   @id @default(uuid())
-  userId    String
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
   pushToken String   @unique
-  platform  String // ios / android / web
+  platform  Platform
   lastSeen  DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+enum Platform {
+  ios
+  android
 }

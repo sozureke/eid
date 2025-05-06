@@ -8,11 +8,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
 import { Request, Response } from 'express'
 import { Public } from '../common/decorators/public.decorator'
 import { AuthService } from './auth.service'
 import { AuthAnonDto } from './dto/auth-anon.dto'
+import { DevicePingDto } from './dto/device-ping.dto'
+import { JwtAuthGuard } from './guard/jwt-auth.guard'
 
 @Controller('auth')
 export class AuthController {
@@ -45,9 +46,16 @@ export class AuthController {
     return res.status(204).send()
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req) {
     return this.authService.getProfile(req.user.userId)
   }
+
+@UseGuards(JwtAuthGuard)
+@Post('device/ping')
+async ping(@Req() req, @Body() dto: DevicePingDto) {
+  await this.authService.registerDevice(req.user.userId, dto)
+  return { ok: true }
+}
 }

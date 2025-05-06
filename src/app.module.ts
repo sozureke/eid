@@ -29,6 +29,7 @@ import { ThoughtsModule } from './thoughts/thoughts.module'
 import { VoidModule } from './void/void.module'
 import { VoidService } from './void/void.service'
 import { NotificationModule } from './notification/notification.module';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { NotificationModule } from './notification/notification.module';
     TfaModule,
     VoidModule,
     FirebaseModule,
-    NotificationModule
+    NotificationModule,
+    DeviceModule
   ],
   controllers: [HealthController, MetricsController],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },

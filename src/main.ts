@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import { applyMigrations } from './bootstrap'
 
+import * as crypto from 'crypto'
 import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './common/filters/all-exception.filter'
 import { LoggerService } from './common/logger/logger.service'
@@ -12,6 +13,7 @@ import appConfig from './config/app.config'
 import { swaggerConfig } from './config/swagger.config'
 import { PrometheusInterceptor } from './metrics/interceptors/prometheus.interceptor'
 
+(global as any).crypto = crypto
 const cookieParser = require('cookie-parser')
 
 async function bootstrap() {
