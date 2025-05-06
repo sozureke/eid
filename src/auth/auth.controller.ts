@@ -47,6 +47,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('logout-all')
+  async logoutAll(@Req() req) {
+    await this.authService.logoutFromAllDevices(req.user.userId)
+    return { ok: true }
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req) {
     return this.authService.getProfile(req.user.userId)

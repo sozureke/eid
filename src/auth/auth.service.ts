@@ -29,21 +29,43 @@ export class AuthService {
     return { accessToken: tokens.accessToken }
   }
 
-  async refreshTokens(token: string, res: Response): Promise<{ accessToken: string }> {
-    const userId = await this.redis.get(`refresh:${token}`)
+  async refreshTokens(oldToken: string, res: Response): Promise<{ accessToken: string }> {
+    const userId = await this.redis.get(`refresh:${oldToken}`)
     if (!userId) throw new UnauthorizedException('Invalid refresh token')
+    await this.redis.del(`refresh:${oldToken}`)
   
-    const hasDevice = await this.prisma.device.count({ where: { userId } })
-    if (!hasDevice) throw new UnauthorizedException('No active device')
+    const accessToken = this.jwt.sign({ sub: userId })
+    const newRefreshToken = crypto.randomUUID()
   
-    return this.generateTokens(userId, res)
+    await this.redis.set(`refresh:${newRefreshToken}`, userId, 'EX', 60 * 60 * 24 * 7)
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    })
+  
+    return { accessToken }
   }
-
+  
   async logout(token: string, res: Response): Promise<void> {
     await this.redis.del(`refresh:${token}`)
     res.clearCookie('refreshToken')
   }
 
+  async logoutFromAllDevices(userId: string): Promise<void> {
+    const keys = await this.redis.keys('refresh:*')
+    const userTokens = []
+  
+    for (const key of keys) {
+      const val = await this.redis.get(key)
+      if (val === userId) userTokens.push(key)
+    }
+  
+    if (userTokens.length) {
+      await this.redis.del(...userTokens)
+    }
+  }
 
   async generateTokens(userId: string, res: Response): Promise<{ accessToken: string }> {
     const accessToken = this.jwt.sign({ sub: userId })
