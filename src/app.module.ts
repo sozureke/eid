@@ -30,6 +30,7 @@ import { VoidModule } from './void/void.module'
 import { VoidService } from './void/void.service'
 import { NotificationModule } from './notification/notification.module';
 import { DeviceModule } from './device/device.module';
+import { EchoModule } from './echo/echo.module';
 
 @Module({
   imports: [
@@ -62,7 +63,8 @@ import { DeviceModule } from './device/device.module';
     VoidModule,
     FirebaseModule,
     NotificationModule,
-    DeviceModule
+    DeviceModule,
+    EchoModule
   ],
   controllers: [HealthController, MetricsController],
   providers: [{provide: 'APP_GUARD', useClass: ThrottlerModule },     { provide: APP_GUARD, useClass: JwtAuthGuard },

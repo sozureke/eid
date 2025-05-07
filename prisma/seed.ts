@@ -12,14 +12,17 @@ async function loadJSON<T>(relativePath: string): Promise<T> {
 }
 
 async function main() {
-  const presets = await loadJSON<SeedPreset[]>('prisma/presets.json')
+  const presets = await loadJSON<SeedPreset[]>('prisma/seed/presets.json')
   const achievements = await loadJSON<SeedAchievement[]>(
-    'prisma/achievements.json'
+    'prisma/seed/achievements.json'
   )
+  
   await prisma.userAchievement.deleteMany()
   await prisma.achievement.deleteMany()
   await prisma.userThought.deleteMany()
   await prisma.presetThought.deleteMany()
+  await prisma.userEcho.deleteMany()
+
 
   for (const p of presets) {
     const categoryId = await prisma.tag
@@ -53,7 +56,6 @@ async function main() {
     })
   }
 
-  // 4) сидим ачивки
   for (const a of achievements) {
     await prisma.achievement.upsert({
       where: { code: a.code },
